@@ -1,0 +1,42 @@
+class_name Entity extends Node2D
+
+signal move_request(entity, tile_coords)
+
+@onready var _components = $Components
+@export var entity_name: String = "Entity"
+
+func move_to(tile_coords: String):
+	move_request.emit(self, tile_coords)
+
+var _tile_pos = "X-X"
+var tile_pos: String:
+	get:
+		return _tile_pos
+	set(value):
+		_tile_pos = value
+		print("New tile pos " + str(value))
+
+# Possible components
+var _sprite = null
+
+# Player control-related
+var _player_movement_controller = null
+
+func _connect_components():
+	for component in _components.get_children():
+		if component is Sprite2D:
+			_sprite = component
+		if component is PlayerMovementController:
+			_player_movement_controller = component
+			_player_movement_controller.connect_parent(self)
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	_connect_components()
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	if _player_movement_controller != null:
+		_player_movement_controller.handle_movements(self)

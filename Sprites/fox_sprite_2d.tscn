@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://luktwnn1ah82"]
+
+[ext_resource type="Texture2D" uid="uid://d1ho8je87d54y" path="res://Sprites/Fox.png" id="1_puelg"]
+
+[node name="FoxSprite2D" type="Sprite2D"]
+texture_filter = 1
+texture = ExtResource("1_puelg")
+offset = Vector2(16, 16)

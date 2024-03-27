@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://de76xywx6dkif"]
+
+[ext_resource type="Script" path="res://Scripts/Tile/Tile.gd" id="1_6wycw"]
+[ext_resource type="Script" path="res://Scripts/Tile/Terrain.gd" id="2_shkbd"]
+[ext_resource type="Texture2D" uid="uid://c5slvcg6043su" path="res://Sprites/Wall.png" id="3_c54oh"]
+
+[node name="TileWall" type="Node2D" node_paths=PackedStringArray("terrain")]
+script = ExtResource("1_6wycw")
+terrain = NodePath("Terrain")
+
+[node name="Terrain" type="Node2D" parent="." node_paths=PackedStringArray("_sprite")]
+script = ExtResource("2_shkbd")
+impassable = true
+_sprite = NodePath("Sprite")
+
+[node name="Sprite" type="Sprite2D" parent="Terrain"]
+texture_filter = 1
+texture = ExtResource("3_c54oh")
+offset = Vector2(16, 16)

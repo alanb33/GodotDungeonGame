@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://djulmjialyhvr"]
+
+[ext_resource type="Script" path="res://Scripts/Tile/Tile.gd" id="1_orf53"]
+[ext_resource type="Script" path="res://Scripts/Tile/Terrain.gd" id="2_2vxua"]
+[ext_resource type="Texture2D" uid="uid://8rqj2mwuoapj" path="res://Sprites/Floor.png" id="3_mhryu"]
+
+[node name="TileFloor" type="Node2D" node_paths=PackedStringArray("terrain")]
+script = ExtResource("1_orf53")
+terrain = NodePath("Terrain")
+
+[node name="Terrain" type="Node2D" parent="." node_paths=PackedStringArray("_sprite")]
+script = ExtResource("2_2vxua")
+_sprite = NodePath("Sprite")
+
+[node name="Sprite" type="Sprite2D" parent="Terrain"]
+texture_filter = 1
+texture = ExtResource("3_mhryu")
+offset = Vector2(16, 16)

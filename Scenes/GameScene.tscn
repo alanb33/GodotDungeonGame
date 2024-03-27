@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://eoirgspkjunk"]
+
+[ext_resource type="Script" path="res://Scenes/TileMaker.gd" id="1_pxg38"]
+
+[node name="GameScene" type="Node"]
+
+[node name="TileMaker" type="Node2D" parent="."]
+script = ExtResource("1_pxg38")
