@@ -1,21 +1,16 @@
 class_name PlayerMovementController extends Node2D
 
-var _parent = null
-
-func connect_parent(entity: Entity):
-	_parent = entity
+signal move_request(dir)
 
 func handle_movements(entity: Entity):
 	if Input.is_action_just_pressed("ui_left"):
-		print(entity.entity_name + " will move left")
+		move_request.emit("left")
 	if Input.is_action_just_pressed("ui_right"):
-		print("Right")
+		move_request.emit("right")
 	if Input.is_action_just_pressed("ui_up"):
-		print("up")
+		move_request.emit("up")
 	if Input.is_action_just_pressed("ui_down"):
-		print("Down")
-		if _parent != null:
-			_parent.move_to("5-5")
+		move_request.emit("down")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

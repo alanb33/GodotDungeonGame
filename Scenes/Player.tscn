@@ -11,5 +11,6 @@ entity_name = "Player"
 [node name="Components" type="Node2D" parent="."]
 
 [node name="Sprite" parent="Components" instance=ExtResource("2_5t86x")]
+z_index = 1
 
 [node name="PlayerMovementController" parent="Components" instance=ExtResource("3_ry8x2")]

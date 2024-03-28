@@ -25,7 +25,6 @@ func _ready() -> void:
 	_connect_signals()
 	_build_dungeon()
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass

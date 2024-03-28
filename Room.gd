@@ -15,6 +15,8 @@ func merge_tiles(incoming_tiles: Dictionary):
 		else:
 			_passable.append(tile)
 			
+	assert(len(_passable) + len(_impassable) > 0, "Room was created but had no passable or impassable tiles")
+			
 func get_random_passable_tile():
 	return _passable.pick_random()
 	

@@ -1,12 +1,9 @@
 class_name Entity extends Node2D
 
-signal move_request(entity, tile_coords)
+signal player_move_request(entity, dir)
 
 @onready var _components = $Components
 @export var entity_name: String = "Entity"
-
-func move_to(tile_coords: String):
-	move_request.emit(self, tile_coords)
 
 var _tile_pos = "X-X"
 var tile_pos: String:
@@ -28,7 +25,10 @@ func _connect_components():
 			_sprite = component
 		if component is PlayerMovementController:
 			_player_movement_controller = component
-			_player_movement_controller.connect_parent(self)
+			_player_movement_controller.move_request.connect(_on_player_movement_request)
+
+func _on_player_movement_request(dir: String):
+	player_move_request.emit(self, dir)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
