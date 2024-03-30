@@ -12,6 +12,9 @@ func add_tile(tile: Tile):
 	$TileContainer.add_child(tile)
 	tile.owner = $TileContainer
 
+func any_room_overlap(new_room: Room):
+	return false
+
 func get_tile(coords: String):
 	# TODO: Regex to detect if coords is in valid format of X-X where X are integers
 	
