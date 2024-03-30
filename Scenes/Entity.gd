@@ -1,6 +1,6 @@
 class_name Entity extends Node2D
 
-signal move_request(entity, dir)
+signal move_request(entity: Entity, dir: MoveTypes.Dir)
 
 @onready var _components = $Components
 @export var entity_name: String = "Entity"
@@ -26,7 +26,7 @@ func _connect_components():
 			_player_movement_controller = component
 			_player_movement_controller.move_request.connect(_on_move_request)
 
-func _on_move_request(dir: String):
+func _on_move_request(dir: MoveTypes.Dir):
 	move_request.emit(self, dir)
 
 # Called when the node enters the scene tree for the first time.
