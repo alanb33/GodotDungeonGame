@@ -4,6 +4,8 @@ extends Node
 var _player_scene: PackedScene = preload("res://Scenes/Player.tscn")
 var _entities = []
 
+signal entity_move_request(entity: Entity, dir: MoveTypes.Dir)
+
 enum Directions {
 	LEFT,
 	UP,
@@ -36,8 +38,7 @@ func place_player():
 	_connect_entities()
 	
 func _on_move_request(entity: Entity, dir: MoveTypes.Dir):
-	assert(entity.tile_pos != "X-X", entity.entity_name + " tried to move, but initial position was never set")
-	print("Move request from " + str(entity.entity_name) + " received to " + MoveTypes.dir_str(dir))
+	entity_move_request.emit(entity, dir)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

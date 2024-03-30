@@ -5,7 +5,9 @@ enum Dir {
 	DOWN,
 	LEFT,
 	RIGHT,
-	RANDOM_NEAR
+	RANDOM,
+	RANDOM_NEAR,
+	RANDOM_ROOM,
 }
 
 static func dir_str(dir: MoveTypes.Dir):
@@ -20,5 +22,7 @@ static func dir_str(dir: MoveTypes.Dir):
 			return "right"
 		MoveTypes.Dir.RANDOM_NEAR:
 			return "random_near"
+		MoveTypes.Dir.RANDOM_ROOM:
+			return "random_room"
 		_:
 			return "bad_dest"

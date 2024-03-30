@@ -12,7 +12,7 @@ func handle_movements(entity: Entity):
 	if Input.is_action_just_pressed("ui_down"):
 		move_request.emit(MoveTypes.Dir.DOWN)
 	if Input.is_action_just_pressed("ui_accept"):
-		move_request.emit(MoveTypes.Dir.RANDOM_NEAR)
+		move_request.emit(MoveTypes.Dir.RANDOM)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

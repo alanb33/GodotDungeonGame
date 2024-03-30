@@ -12,6 +12,18 @@ func add_tile(tile: Tile):
 	$TileContainer.add_child(tile)
 	tile.owner = $TileContainer
 
+func get_tile(coords: String):
+	# TODO: Regex to detect if coords is in valid format of X-X where X are integers
+	
+	if _tiles[coords] != null:
+		return _tiles[coords]
+	else:
+		return null
+		
+func get_tile_from_grid_position(grid_pos: Vector2):
+	var coord_str = str(grid_pos.x) + "-" + str(grid_pos.y)
+	return get_tile(coord_str) 
+
 func merge_tiles(other_dictionary: Dictionary):
 	# true refers to overwriting
 	_tiles.merge(other_dictionary, true)

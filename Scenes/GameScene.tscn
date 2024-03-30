@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://eoirgspkjunk"]
+[gd_scene load_steps=6 format=3 uid="uid://eoirgspkjunk"]
 
 [ext_resource type="Script" path="res://Scenes/GameManager.gd" id="1_1grkk"]
 [ext_resource type="Script" path="res://Scenes/TileMaker.gd" id="1_pxg38"]
 [ext_resource type="Script" path="res://Scenes/EntityManager.gd" id="2_00oh5"]
 [ext_resource type="Script" path="res://Scenes/TileManager.gd" id="3_yxqcv"]
+[ext_resource type="Script" path="res://Scenes/EntityMovementController.gd" id="4_rek23"]
 
 [node name="GameScene" type="Node"]
 
@@ -21,6 +22,11 @@ _tile_manager = NodePath("../TileManager")
 [node name="EntityManager" type="Node" parent="GameManager" node_paths=PackedStringArray("_tile_manager")]
 script = ExtResource("2_00oh5")
 _tile_manager = NodePath("../TileManager")
+
+[node name="EntityMovementController" type="Node" parent="GameManager/EntityManager" node_paths=PackedStringArray("_entity_manager", "_tile_manager")]
+script = ExtResource("4_rek23")
+_entity_manager = NodePath("..")
+_tile_manager = NodePath("../../TileManager")
 
 [node name="TileManager" type="Node" parent="GameManager"]
 script = ExtResource("3_yxqcv")
