@@ -17,6 +17,9 @@ var sprite: Sprite2D:
 	set(value):
 		terrain.sprite = value
 
+func grid_position_as_coordinates():
+	return str(grid_position.x) + "-" + str(grid_position.y)
+
 func resize():
 	terrain.resize()
 	position.x = TileInfo.CURRENT_DIMENSIONS.x * (grid_position.x)
