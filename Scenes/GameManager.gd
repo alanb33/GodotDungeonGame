@@ -2,7 +2,7 @@ extends Node
 
 @export var _tile_maker: TileMaker
 @export var _entity_manager: EntityManager
-@export var _tile_manager: TileManager
+@export var _level_manager: LevelManager
 
 func _connect_signals():
 	_tile_maker.dungeon_built.connect(_on_dungeon_built)
@@ -17,7 +17,7 @@ func _on_dungeon_built():
 func _test_links():
 	assert(_tile_maker != null)
 	assert(_entity_manager != null)
-	assert(_tile_manager != null)
+	assert(_level_manager != null)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

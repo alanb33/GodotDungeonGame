@@ -4,7 +4,7 @@ extends Node
 signal dungeon_built
 
 @export var _entity_manager: EntityManager
-@export var _tile_manager: TileManager
+@export var _level_manager: LevelManager
 
 var _tile_floor_scene: PackedScene = preload("res://Scenes/Terrain/TileFloor.tscn")
 var _tile_wall_scene: PackedScene = preload("res://Scenes/Terrain/TileWall.tscn")
@@ -34,20 +34,17 @@ func build_room():
 				tile = _tile_wall_scene.instantiate()
 			else:
 				tile = _tile_floor_scene.instantiate()
-			_tile_manager.add_tile(tile)
 			tile.grid_position = Vector2(x + col, y + row)
 			tile.resize()
 			
 			var tile_key = str(col + x) + "-" + str(row + y)
 			_tile_dict[tile_key] = tile
-			
-	_tile_manager.merge_tiles(_tile_dict)
 	
 	var room = Room.new()
 	room.pos = Vector2(x, y)
 	room.size = Vector2(width, height)
 	room.merge_tiles(_tile_dict)
-	_tile_manager.add_room(room)
+	_level_manager.add_room(room)
 
 func build_dungeon():
 	#build_room(1, 1, 3, 3)

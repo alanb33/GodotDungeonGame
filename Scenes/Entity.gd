@@ -6,7 +6,7 @@ signal move_request(entity: Entity, dir: MoveTypes.Dir)
 @export var entity_name: String = "Entity"
 
 var _tile_pos = "X-X"
-var tile_pos: String:
+var tile_pos_str: String:
 	get:
 		return _tile_pos
 	set(value):

@@ -13,11 +13,11 @@ enum Directions {
 	DOWN,
 }
 
-@export var _tile_manager: TileManager
+@export var _level_manager: LevelManager
 
 func _test_links():
 	assert(_player_scene.can_instantiate())
-	assert(_tile_manager != null)
+	assert(_level_manager != null)
 	
 func add_entity(entity: Entity):
 	if entity not in _entities:
@@ -29,11 +29,11 @@ func _connect_entities():
 		print("Connected " + entity.entity_name)
 	
 func place_player():
-	var tile: Tile = _tile_manager.get_random_passable_tile()
+	var tile: Tile = _level_manager.get_any_passable_tile()
 	var player: Entity = _player_scene.instantiate()
 	add_child(player)
 	player.position = tile.position
-	player.tile_pos = tile.grid_position_as_coordinates()
+	player.tile_pos_str = tile.grid_position_as_string()
 	add_entity(player)
 	_connect_entities()
 	
