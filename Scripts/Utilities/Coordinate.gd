@@ -19,3 +19,8 @@ var vector2: Vector2:
 		_vector2 = value
 		var coord_str = str(value.x) + "-" + str(value.y)
 		_string = coord_str 
+
+func make_equal_to(other: Coordinate):
+	### GDScript workaround for a lack of being able to write operator overloading
+	_string = other.string
+	_vector2 = other.vector2

@@ -33,7 +33,7 @@ func place_player():
 	var player: Entity = _player_scene.instantiate()
 	add_child(player)
 	player.position = tile.position
-	player.tile_pos_str = tile.grid_position_as_string()
+	player.coordinate.make_equal_to(tile.coordinate)
 	add_entity(player)
 	_connect_entities()
 	

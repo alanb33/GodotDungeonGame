@@ -33,13 +33,9 @@ func get_any_tile():
 func get_room_by_tile(tile: Tile):
 	### Returns a Room object if the requested Tile is in any Room, otherwise returns null. 
 	for room in _rooms:
-		if room[tile.grid_position_as_coordinates()] != null:
+		if room[tile.coordinate.string] != null:
 			return room
 	return null
 	
-func get_tile_from_vector2(tile_coords: Vector2):
-	var tile_str = str(tile_coords.x) + "-" + str(tile_coords.y)
-	return _all_tiles[tile_str]
-	
-func get_tile_from_string(tile_coords: String):
-	return _all_tiles[tile_coords]
+func get_tile_from_coordinate(coordinate: Coordinate):
+	return _all_tiles[coordinate.string]

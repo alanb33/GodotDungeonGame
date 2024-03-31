@@ -34,7 +34,7 @@ func build_room():
 				tile = _tile_wall_scene.instantiate()
 			else:
 				tile = _tile_floor_scene.instantiate()
-			tile.grid_position = Vector2(x + col, y + row)
+			tile.coordinate.vector2 = Vector2(x + col, y + row)
 			tile.resize()
 			
 			var tile_key = str(col + x) + "-" + str(row + y)

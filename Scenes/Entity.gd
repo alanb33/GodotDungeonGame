@@ -5,12 +5,7 @@ signal move_request(entity: Entity, dir: MoveTypes.Dir)
 @onready var _components = $Components
 @export var entity_name: String = "Entity"
 
-var _tile_pos = "X-X"
-var tile_pos_str: String:
-	get:
-		return _tile_pos
-	set(value):
-		_tile_pos = value
+var coordinate: Coordinate = Coordinate.new()
 
 # Possible components
 var _sprite: Sprite2D = null
