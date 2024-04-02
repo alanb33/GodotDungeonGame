@@ -4,11 +4,13 @@ extends Node
 @export var _entity_manager: EntityManager
 @export var _level_manager: LevelManager
 
+const DUNGEON_ROOMS = 8
+
 func _connect_signals():
 	_tile_maker.dungeon_built.connect(_on_dungeon_built)
 
 func _build_dungeon():
-	_tile_maker.build_dungeon()
+	_level_manager.build_dungeon(DUNGEON_ROOMS)
 	
 func _on_dungeon_built():
 	print("Dungeon built")
@@ -27,4 +29,5 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if Input.is_action_just_pressed("ui_home"):
+		_build_dungeon()

@@ -28,7 +28,8 @@ script = ExtResource("4_rek23")
 _entity_manager = NodePath("..")
 _level_manager = NodePath("../../../LevelManager")
 
-[node name="LevelManager" type="Node" parent="."]
+[node name="LevelManager" type="Node" parent="." node_paths=PackedStringArray("_tile_maker")]
 script = ExtResource("6_virw4")
+_tile_maker = NodePath("../GameManager/TileMaker")
 
 [node name="TileContainer" type="Node" parent="LevelManager"]

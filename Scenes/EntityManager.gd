@@ -3,6 +3,7 @@ extends Node
 
 var _player_scene: PackedScene = preload("res://Scenes/Player.tscn")
 var _entities = []
+var _player: Entity = null
 
 signal entity_move_request(entity: Entity, dir: MoveTypes.Dir)
 
@@ -30,11 +31,12 @@ func _connect_entities():
 	
 func place_player():
 	var tile: Tile = _level_manager.get_any_passable_tile()
-	var player: Entity = _player_scene.instantiate()
-	add_child(player)
-	player.position = tile.position
-	player.coordinate.make_equal_to(tile.coordinate)
-	add_entity(player)
+	if _player == null:
+		_player = _player_scene.instantiate()
+		add_child(_player)
+	_player.position = tile.position
+	_player.coordinate.make_equal_to(tile.coordinate)
+	add_entity(_player)
 	_connect_entities()
 	
 func _on_move_request(entity: Entity, dir: MoveTypes.Dir):
