@@ -33,6 +33,18 @@ func has_tile_by_coordinate_string(coordinate_string: String) -> bool:
 	if _all_tiles.get(coordinate_string):
 		return true
 	return false
+	
+func is_coordinate_string_in_corner(coordinate_string: String):
+	var nw = TileInfo.vector_to_coordinate_string(pos.x, pos.y)
+	var ne = TileInfo.vector_to_coordinate_string(pos.x + size.x, pos.y)
+	var sw = TileInfo.vector_to_coordinate_string(pos.x, pos.y + size.y)
+	var se = TileInfo.vector_to_coordinate_string(pos.x + size.x, pos.y + size.y)
+	
+	var coords = [nw, ne, sw, se]
+	
+	if coordinate_string in coords:
+		return true
+	return false
 
 func merge_tiles(incoming_tiles: Dictionary):
 

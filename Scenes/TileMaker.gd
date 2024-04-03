@@ -119,9 +119,13 @@ func _valid_hallway(tile_proposal: Dictionary) -> bool:
 		for coordinate in tile_proposal.keys():
 			var tile: Tile = room.get_tile_by_coordinate_string(coordinate)
 			if tile != null:
-				if tile.terrain.impassable:
-					wall_intersection_count += 1
-					intersecting_tiles.append(tile)
+				if room.is_coordinate_string_in_corner(tile.coordinate.string):
+					print("Rejecting bad hallway: corner intersection")
+					return false
+				else:
+					if tile.terrain.impassable:
+						wall_intersection_count += 1
+						intersecting_tiles.append(tile)
 		
 		if wall_intersection_count > 2:
 			print("Rejecting bad hallway: Too many wall intersections")
