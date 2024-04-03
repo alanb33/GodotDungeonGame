@@ -36,9 +36,9 @@ func has_tile_by_coordinate_string(coordinate_string: String) -> bool:
 	
 func is_coordinate_string_in_corner(coordinate_string: String):
 	var nw = TileUtil.vector_to_coordinate_string(pos.x, pos.y)
-	var ne = TileUtil.vector_to_coordinate_string(pos.x + size.x, pos.y)
-	var sw = TileUtil.vector_to_coordinate_string(pos.x, pos.y + size.y)
-	var se = TileUtil.vector_to_coordinate_string(pos.x + size.x, pos.y + size.y)
+	var ne = TileUtil.vector_to_coordinate_string(pos.x + size.x - 1, pos.y)
+	var sw = TileUtil.vector_to_coordinate_string(pos.x, pos.y + size.y - 1)
+	var se = TileUtil.vector_to_coordinate_string(pos.x + size.x - 1, pos.y + size.y - 1)
 	
 	var coords = [nw, ne, sw, se]
 	
