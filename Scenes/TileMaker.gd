@@ -53,6 +53,32 @@ func build_hallways():
 	for i in range(number_of_hallways):
 		var start_room: Room = rooms[i]
 		var dest_room: Room = rooms[i+1]
+		var valid_proposal: Dictionary = _assemble_hallway_candidate(start_room, dest_room)
+			
+		for y in valid_proposal["y_range"]:
+			var hallway_tile: Tile = _tile_floor_scene.instantiate()
+			hallway_tile.coordinate.vector2 = Vector2(valid_proposal["start_tile"].coordinate.vector2.x, y)
+			hallway_tile.resize()
+			hallway_tiles[hallway_tile.coordinate.string] = hallway_tile
+
+		for x in valid_proposal["x_range"]:
+			var hallway_tile: Tile = _tile_floor_scene.instantiate()
+			hallway_tile.coordinate.vector2 = Vector2(x, valid_proposal["dest_tile"].coordinate.vector2.y)
+			hallway_tile.resize()
+			hallway_tiles[hallway_tile.coordinate.string] = hallway_tile
+			
+	for tile_key in hallway_tiles:
+		_level_manager.add_tile(hallway_tiles[tile_key])
+
+func _assemble_hallway_candidate(start_room: Room, dest_room: Room) -> Dictionary:
+	# This code is not the best. I am unhappy with returning a dictionary of arbitrary values.
+	# What is a better way to do it?
+	
+	var valid_proposal: Dictionary = {}
+	
+	while true:
+		
+		var tile_proposal: Dictionary = {}
 		var start_tile: Tile = start_room.get_random_passable_tile()
 		var dest_tile: Tile = dest_room.get_random_passable_tile()
 		
@@ -61,26 +87,64 @@ func build_hallways():
 		if y_diff > 0:
 			y_step = -1
 			
-		for y in range(start_tile.coordinate.vector2.y, dest_tile.coordinate.vector2.y, y_step):
-			var hallway_tile: Tile = _tile_floor_scene.instantiate()
-			hallway_tile.coordinate.vector2 = Vector2(start_tile.coordinate.vector2.x, y)
-			hallway_tile.resize()
-			hallway_tiles[hallway_tile.coordinate.string] = hallway_tile
+		var proposed_y_range = range(start_tile.coordinate.vector2.y, dest_tile.coordinate.vector2.y, y_step)
+		for y in proposed_y_range:
+			var tile_coord = str(start_tile.coordinate.vector2.x) + "-" + str(y)
+			tile_proposal[tile_coord] = true
 			
 		var x_step = 1
 		var x_diff = start_tile.coordinate.vector2.x - dest_tile.coordinate.vector2.x
 		if x_diff > 0:
 			x_step = -1
 			
-		for x in range(start_tile.coordinate.vector2.x, dest_tile.coordinate.vector2.x, x_step):
+		var proposed_x_range = range(start_tile.coordinate.vector2.x, dest_tile.coordinate.vector2.x, x_step)
+		for x in proposed_x_range:
+			var tile_coord = str(x) + "-" + str(dest_tile.coordinate.vector2.y)
+			tile_proposal[tile_coord] = true
 			
-			var hallway_tile: Tile = _tile_floor_scene.instantiate()
-			hallway_tile.coordinate.vector2 = Vector2(x, dest_tile.coordinate.vector2.y)
-			hallway_tile.resize()
-			hallway_tiles[hallway_tile.coordinate.string] = hallway_tile
+		if _valid_hallway(tile_proposal):
+			valid_proposal["y_range"] = proposed_y_range
+			valid_proposal["x_range"] = proposed_x_range
+			valid_proposal["start_tile"] = start_tile
+			valid_proposal["dest_tile"] = dest_tile
+			break
 			
-	for tile_key in hallway_tiles:
-		_level_manager.add_tile(hallway_tiles[tile_key])
+	return valid_proposal
+
+func _valid_hallway(tile_proposal: Dictionary) -> bool:
+	var dungeon_rooms: Array = _level_manager.get_rooms()
+	for room in dungeon_rooms:
+		var intersecting_tiles = []
+		var wall_intersection_count = 0
+		for coordinate in tile_proposal.keys():
+			var tile: Tile = room.get_tile_by_coordinate_string(coordinate)
+			if tile != null:
+				if tile.terrain.impassable:
+					wall_intersection_count += 1
+					intersecting_tiles.append(tile)
+		
+		if wall_intersection_count > 2:
+			print("Rejecting bad hallway: Too many wall intersections")
+			return false
+			
+		elif wall_intersection_count == 2:
+			var tile_a: Tile = intersecting_tiles[0]
+			var tile_b: Tile = intersecting_tiles[1]
+			
+			var adjacency_error := false
+			if tile_a.coordinate.vector2.x == tile_b.coordinate.vector2.x:
+				if abs(tile_a.coordinate.vector2.y - tile_b.coordinate.vector2.y) == 1:
+					adjacency_error = true
+					
+			if tile_a.coordinate.vector2.y == tile_b.coordinate.vector2.x:
+				if abs(tile_a.coordinate.vector2.x - tile_b.coordinate.vector2.x) == 1:
+					adjacency_error = true
+					
+			if adjacency_error:
+				print("Rejecting bad hallway: Corner adjacency error")
+				return false
+				
+	return true
 
 func build_room():
 	

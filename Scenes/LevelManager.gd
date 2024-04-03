@@ -12,7 +12,6 @@ var _rooms: Array = []
 func valid_room(new_room: Room):
 	for room in _rooms:
 		if new_room.overlaps_with(room):
-			print("Rejecting room overlap")
 			return false
 	return true
 
@@ -23,7 +22,6 @@ func add_room(room: Room):
 		for key in room.get_all_tiles():
 			if _all_tiles.get(key) != null:
 				_all_tiles[key].queue_free()
-				print("Preventing duplicate tile")
 		
 		_all_tiles.merge(room.get_all_tiles(), true) # Overwrite any existing
 		_passable_tiles.merge(room.get_passable_tiles(), true)
@@ -40,7 +38,6 @@ func add_tile(tile: Tile):
 		# Check if the tile is in a room, and if so, register it with the room
 		var tile_room = get_room_by_tile(tile)
 		if tile_room != null:
-			print("Non-null room")
 			tile_room.add_tile(tile)
 			
 		# Clear existing tile
@@ -89,11 +86,8 @@ func get_room_by_tile(tile: Tile) -> Room:
 	### Returns a Room object if the requested Tile is in any Room, otherwise returns null. 
 	for room in _rooms:
 		var room_tiles = room.get_all_tiles()
-		print("Testing room for " + tile.coordinate.string)
 		if room_tiles.get(tile.coordinate.string) != null:
-			print("Room found")
 			return room
-	print("Room not found")
 	return null
 	
 func get_rooms() -> Array:

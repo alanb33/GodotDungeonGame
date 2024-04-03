@@ -25,6 +25,14 @@ func add_tile(tile: Tile):
 		_impassable_tiles[key] = tile
 	else:
 		_passable_tiles[key] = tile
+		
+func get_tile_by_coordinate_string(coordinate_string: String) -> Tile:
+	return _all_tiles.get(coordinate_string)
+		
+func has_tile_by_coordinate_string(coordinate_string: String) -> bool:
+	if _all_tiles.get(coordinate_string):
+		return true
+	return false
 
 func merge_tiles(incoming_tiles: Dictionary):
 
