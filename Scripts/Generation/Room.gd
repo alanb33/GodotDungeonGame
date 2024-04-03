@@ -18,6 +18,14 @@ func overlaps_with(other_room: Room):
 	
 	return false
 
+func add_tile(tile: Tile):
+	var key = tile.coordinate.string
+	_all_tiles[key] = tile
+	if tile.terrain.impassable:
+		_impassable_tiles[key] = tile
+	else:
+		_passable_tiles[key] = tile
+
 func merge_tiles(incoming_tiles: Dictionary):
 
 	_all_tiles.merge(incoming_tiles, true)

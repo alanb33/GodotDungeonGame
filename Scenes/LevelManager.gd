@@ -34,19 +34,28 @@ func add_room(room: Room):
 			$TileContainer.add_child(room_tiles[tile_key])
 
 func add_tile(tile: Tile):
-	var coord = tile.coordinate.string
-	if _all_tiles.has(coord):
-		_all_tiles[coord].queue_free()
-		if tile.terrain.impassable:
-			_impassable_tiles[coord] = null
-		else:
-			_passable_tiles[coord] = null
+	var key = tile.coordinate.string
+	if _all_tiles.has(key):
+		
+		# Check if the tile is in a room, and if so, register it with the room
+		var tile_room = get_room_by_tile(tile)
+		if tile_room != null:
+			print("Non-null room")
+			tile_room.add_tile(tile)
 			
-	_all_tiles[coord] = tile
+		# Clear existing tile
+		_all_tiles[key].queue_free()
+		if tile.terrain.impassable:
+			_impassable_tiles[key] = null
+		else:
+			_passable_tiles[key] = null
+			
+	# Add new tile to the dictionarties
+	_all_tiles[key] = tile
 	if tile.terrain.impassable:
-		_impassable_tiles[coord] = tile
+		_impassable_tiles[key] = tile
 	else:
-		_passable_tiles[coord] = tile
+		_passable_tiles[key] = tile
 	
 	add_child(tile)
 
@@ -76,18 +85,31 @@ func get_any_tile():
 	var tile_key = _all_tiles.keys().pick_random()
 	return _all_tiles[tile_key]
 	
-func get_room_by_tile(tile: Tile):
+func get_room_by_tile(tile: Tile) -> Room:
 	### Returns a Room object if the requested Tile is in any Room, otherwise returns null. 
 	for room in _rooms:
-		if room[tile.coordinate.string] != null:
+		var room_tiles = room.get_all_tiles()
+		print("Testing room for " + tile.coordinate.string)
+		if room_tiles.get(tile.coordinate.string) != null:
+			print("Room found")
 			return room
+	print("Room not found")
 	return null
 	
 func get_rooms() -> Array:
 	return _rooms
 	
-func get_tile_from_coordinate(coordinate: Coordinate):
+func get_tile_from_coordinate(coordinate: Coordinate) -> Tile:
 	return _all_tiles.get(coordinate.string)
+	
+func highlight_rooms():
+	assert(len(_rooms) > 0, "Tried to highlight rooms, but none are stored")
+	for room: Room in _rooms:
+		var room_color = Color(randf(), randf(), randf())
+		var tiles: Dictionary = room.get_all_tiles()
+		for tile_key in tiles:
+			var tile: Tile = tiles[tile_key]
+			tile.sprite.modulate = room_color
 
 func _test_links():
 	assert(_tile_maker != null)

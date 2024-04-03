@@ -61,14 +61,10 @@ func build_hallways():
 		if y_diff > 0:
 			y_step = -1
 			
-		print("y_diff: " + str(y_diff))
-		print("range is: " + str(start_tile.coordinate.vector2.y) + " to " + str(dest_tile.coordinate.vector2.y) + " with a step of " + str(y_step))
-			
 		for y in range(start_tile.coordinate.vector2.y, dest_tile.coordinate.vector2.y, y_step):
 			var hallway_tile: Tile = _tile_floor_scene.instantiate()
 			hallway_tile.coordinate.vector2 = Vector2(start_tile.coordinate.vector2.x, y)
 			hallway_tile.resize()
-			print("y_diff instantiation at " + str(hallway_tile.coordinate.vector2))
 			hallway_tiles[hallway_tile.coordinate.string] = hallway_tile
 			
 		var x_step = 1
@@ -76,14 +72,11 @@ func build_hallways():
 		if x_diff > 0:
 			x_step = -1
 			
-		print("x_diff: " + str(x_diff))
-			
 		for x in range(start_tile.coordinate.vector2.x, dest_tile.coordinate.vector2.x, x_step):
 			
 			var hallway_tile: Tile = _tile_floor_scene.instantiate()
 			hallway_tile.coordinate.vector2 = Vector2(x, dest_tile.coordinate.vector2.y)
 			hallway_tile.resize()
-			print("x_diff instantiation at " + str(hallway_tile.coordinate.vector2))
 			hallway_tiles[hallway_tile.coordinate.string] = hallway_tile
 			
 	for tile_key in hallway_tiles:
