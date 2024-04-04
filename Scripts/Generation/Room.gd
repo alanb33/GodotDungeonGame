@@ -34,6 +34,24 @@ func has_tile_by_coordinate_string(coordinate_string: String) -> bool:
 		return true
 	return false
 	
+func get_passable_edge_tiles() -> Dictionary:
+	var edge_x = [pos.x, pos.x + size.x - 1]
+	var edge_y = [pos.y, pos.y + size.y - 1]
+	
+	var passable_edges = {}
+	
+	for tile_key in _all_tiles.keys():
+		var tile: Tile = _all_tiles[tile_key]
+		var coord = tile.coordinate.string
+		if tile.coordinate.vector2.x in edge_x:
+			if not tile.terrain.impassable:
+				passable_edges[coord] = true
+		if tile.coordinate.vector2.y in edge_y:
+			if not tile.terrain.impassable:
+				passable_edges[coord] = true
+			
+	return passable_edges
+	
 func is_coordinate_string_in_corner(coordinate_string: String):
 	var nw = TileUtil.vector_to_coordinate_string(pos.x, pos.y)
 	var ne = TileUtil.vector_to_coordinate_string(pos.x + size.x - 1, pos.y)

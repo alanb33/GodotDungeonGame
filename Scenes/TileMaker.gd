@@ -8,6 +8,7 @@ signal dungeon_built
 
 var _tile_floor_scene: PackedScene = preload("res://Scenes/Terrain/TileFloor.tscn")
 var _tile_wall_scene: PackedScene = preload("res://Scenes/Terrain/TileWall.tscn")
+var _tile_feature_door: PackedScene = preload("res://Scripts/Tile/Feature/FeatureScenes/FeatureDoor.tscn")
 
 func _assemble_room_candidate():
 
@@ -164,8 +165,17 @@ func build_dungeon(size: int):
 		build_room()
 		
 	build_hallways()
+	_place_doors()
 		
 	dungeon_built.emit()
+
+func _place_doors():
+	for room: Room in _level_manager.get_rooms():
+		var passable_edge_coordinates: Dictionary = room.get_passable_edge_tiles()
+		if not passable_edge_coordinates.is_empty():
+			for coordinate in passable_edge_coordinates.keys():
+				var tile: Tile = room.get_tile_by_coordinate_string(coordinate)
+				tile.feature = _tile_feature_door.instantiate()
 
 func _test_links():
 	assert(_tile_floor_scene.can_instantiate(), "Cannot instantiate Floor Scene")

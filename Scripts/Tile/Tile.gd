@@ -8,6 +8,19 @@ extends Node2D
 var coordinate: Coordinate = Coordinate.new()
 
 @export var terrain: Terrain
+var _feature: Feature = null
+var feature: Feature:
+	get:
+		return _feature
+	set(new_feature):
+		assert(new_feature != null, "Tile tried to instantiate null feature")
+		assert(new_feature is Feature, "New feature is not type FeatureDoor but " + str(typeof(new_feature)))
+		if _feature != null:
+			_feature.queue_free()
+			_feature = null
+		_feature = new_feature
+		add_child(_feature)
+		print(_feature.get_child_count())
 var items = []
 var entity = null
 
@@ -19,5 +32,7 @@ var sprite: Sprite2D:
 
 func resize():
 	terrain.resize()
+	if feature:
+		feature.resize()
 	position.x = TileInfo.CURRENT_DIMENSIONS.x * (coordinate.vector2.x)
 	position.y = TileInfo.CURRENT_DIMENSIONS.y * (coordinate.vector2.y)

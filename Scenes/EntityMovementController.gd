@@ -36,8 +36,16 @@ func _on_entity_move_request(entity: Entity, dir: MoveTypes.Dir):
 		if dest_tile.terrain.impassable:
 			print("You bump against the wall!")
 		else:
-			entity.coordinate.make_equal_to(dest_tile.coordinate)
-			entity.position = dest_tile.position
+			if dest_tile.feature:
+				if not dest_tile.feature.blocking_contact:
+					_move_entity(entity, dest_tile)
+				dest_tile.feature.do_entity_contact()
+			else:
+				_move_entity(entity, dest_tile)
+				
+func _move_entity(entity: Entity, dest_tile: Tile):
+	entity.coordinate.make_equal_to(dest_tile.coordinate)
+	entity.position = dest_tile.position
 		
 func _test_links():
 	assert(_entity_manager != null, "EMC has a null EM link")
