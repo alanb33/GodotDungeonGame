@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cgjkmk4l5s40o"]
+
+[ext_resource type="Texture2D" uid="uid://crgvr11fkqrn3" path="res://Sprites/GridSelector.png" id="1_oghy1"]
+[ext_resource type="Script" path="res://Scenes/Util/ResizingSprite.gd" id="2_baml2"]
+
+[node name="GridSelectorSprite" type="Sprite2D"]
+z_index = 10
+texture_filter = 2
+texture = ExtResource("1_oghy1")
+offset = Vector2(16, 16)
+script = ExtResource("2_baml2")

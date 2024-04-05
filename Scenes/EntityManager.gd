@@ -6,6 +6,7 @@ var _entities = []
 var _player: Entity = null
 
 signal entity_move_request(entity: Entity, dir: MoveTypes.Dir)
+signal entity_action_request(entity: Entity, action: ActionTypes.Action)
 
 enum Directions {
 	LEFT,
@@ -27,7 +28,7 @@ func add_entity(entity: Entity):
 func _connect_entities():
 	for entity in _entities:
 		entity.move_request.connect(_on_move_request)
-		print("Connected " + entity.entity_name)
+		entity.action_request.connect(_on_action_request)
 	
 func place_player():
 	var tile: Tile = _level_manager.get_any_passable_tile()
@@ -38,6 +39,9 @@ func place_player():
 	_player.coordinate.make_equal_to(tile.coordinate)
 	add_entity(_player)
 	_connect_entities()
+	
+func _on_action_request(entity: Entity, action: ActionTypes.Action):
+	entity_action_request.emit(entity, action)
 	
 func _on_move_request(entity: Entity, dir: MoveTypes.Dir):
 	entity_move_request.emit(entity, dir)

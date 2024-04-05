@@ -2,7 +2,7 @@ class_name PlayerMovementController extends Node2D
 
 signal move_request(dir: MoveTypes.Dir)
 
-func handle_movements(entity: Entity):
+func handle_movements():
 	if Input.is_action_just_pressed("ui_left"):
 		move_request.emit(MoveTypes.Dir.LEFT)
 	if Input.is_action_just_pressed("ui_right"):

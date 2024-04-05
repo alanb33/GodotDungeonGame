@@ -5,9 +5,14 @@ enum Dir {
 	DOWN,
 	LEFT,
 	RIGHT,
+	NW,
+	NE,
+	SE,
+	SW,
 	RANDOM,
 	RANDOM_NEAR,
 	RANDOM_ROOM,
+	NONE,
 }
 
 static func dir_str(dir: MoveTypes.Dir):

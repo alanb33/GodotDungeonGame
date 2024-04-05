@@ -4,26 +4,26 @@ extends Feature
 var _closed_texture: Texture = preload("res://Sprites/Door_Closed.png")
 var _open_texture: Texture = preload("res://Sprites/Door_Open.png")
 
-var _closed = true
+var closed := true
 
-func _close():
+func close():
+	print("Closing...?")
 	$Sprite2D.texture = _closed_texture
 	blocking_contact = true
-	_closed = true
+	closed = true
 	transparent = false
+	print("Closed...?")
+	print(closed)
 	
-func _open():
+func open():
 	$Sprite2D.texture = _open_texture
 	blocking_contact = false
-	_closed = false
+	closed = false
 	transparent = true
 
 func do_entity_contact():
-	if _closed:
-		_open()
-		print("Opening door")
-	else:
-		print("Passing open door")
+	if closed:
+		open()
 	
 func _prepare_sprite():
 	# TODO: Turn the base Feature into a scene so we don't need to instantiate in every child.
@@ -34,4 +34,4 @@ func _prepare_sprite():
 	
 func _ready():
 	_prepare_sprite()
-	_close()
+	close()
