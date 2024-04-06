@@ -23,6 +23,18 @@ func _on_entity_move_request(entity: Entity, dir: MoveTypes.Dir):
 			new_dest_coord.vector2.x -= 1
 		MoveTypes.Dir.RIGHT:
 			new_dest_coord.vector2.x += 1
+		MoveTypes.Dir.NW:
+			new_dest_coord.vector2.x -= 1
+			new_dest_coord.vector2.y -= 1
+		MoveTypes.Dir.NE:
+			new_dest_coord.vector2.x += 1
+			new_dest_coord.vector2.y -= 1
+		MoveTypes.Dir.SE:
+			new_dest_coord.vector2.x += 1
+			new_dest_coord.vector2.y += 1
+		MoveTypes.Dir.SW:
+			new_dest_coord.vector2.x -= 1
+			new_dest_coord.vector2.y += 1
 		MoveTypes.Dir.RANDOM:
 			new_dest_coord.make_equal_to(_level_manager.get_any_passable_tile().coordinate)
 		_:
