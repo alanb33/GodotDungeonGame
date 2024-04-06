@@ -166,7 +166,7 @@ func build_dungeon(size: int):
 		
 	build_hallways()
 	_place_doors()
-		
+
 	dungeon_built.emit()
 
 func _place_doors():
@@ -176,6 +176,7 @@ func _place_doors():
 			for coordinate in passable_edge_coordinates.keys():
 				var tile: Tile = room.get_tile_by_coordinate_string(coordinate)
 				tile.feature = _tile_feature_door.instantiate()
+
 
 func _test_links():
 	assert(_tile_floor_scene.can_instantiate(), "Cannot instantiate Floor Scene")

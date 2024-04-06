@@ -9,7 +9,6 @@ func _connect_em_signals():
 
 func _on_entity_move_request(entity: Entity, dir: MoveTypes.Dir):
 	assert(entity.coordinate.string != "X-X", entity.entity_name + " tried to move, but initial position was never set")
-	print("Move request from " + str(entity.entity_name) + " received to " + MoveTypes.dir_str(dir))
 	
 	var entity_tile = _level_manager.get_tile_from_coordinate(entity.coordinate)
 	var new_dest_coord = Coordinate.new()
@@ -31,7 +30,7 @@ func _on_entity_move_request(entity: Entity, dir: MoveTypes.Dir):
 			
 	var dest_tile: Tile = _level_manager.get_tile_from_coordinate(new_dest_coord)
 	if dest_tile == null:
-		print("Requested destination tile is not initialized; canceling move")
+		print("You bump against the wall!")
 	else:
 		if dest_tile.terrain.impassable:
 			print("You bump against the wall!")

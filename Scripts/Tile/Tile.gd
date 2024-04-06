@@ -20,7 +20,6 @@ var feature: Feature:
 			_feature = null
 		_feature = new_feature
 		add_child(_feature)
-		print(_feature.get_child_count())
 var items = []
 var entity = null
 

@@ -52,12 +52,11 @@ func _handle_close_action(entity: Entity):
 		if tile_to_close != null:
 			if tile_to_close.feature != null:
 				if tile_to_close.feature is FeatureDoor:
-					print("Door detected")
 					if not tile_to_close.feature.closed:
-						print("Trying to close door")
 						tile_to_close.feature.close()
+						print("You close the door.")
 					else:
-						print("Door is already closed.")
+						print("That door is already closed.")
 				else:
 					print("Nothing to close there.")
 			else:

@@ -13,7 +13,6 @@ func _build_dungeon():
 	_level_manager.build_dungeon(DUNGEON_ROOMS)
 	
 func _on_dungeon_built():
-	print("Dungeon built")
 	_entity_manager.place_player()
 	_level_manager.highlight_rooms()
 	
