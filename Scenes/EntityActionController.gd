@@ -5,26 +5,28 @@ extends Node
 @export var _level_manager: LevelManager
 
 var _grid_selector_scene: PackedScene = preload("res://Scenes/Util/GridSelector.tscn")
+var _awaiting_input := false
 
 signal _input_dir(dir: TileUtil.Dir)
 
-func _ask_player_dir_input():
-	if Input.is_action_just_pressed("ui_left"):
-		_input_dir.emit(TileUtil.Dir.W)
-	if Input.is_action_just_pressed("ui_right"):
-		_input_dir.emit(TileUtil.Dir.E)
-	if Input.is_action_just_pressed("ui_up"):
-		_input_dir.emit(TileUtil.Dir.N)
-	if Input.is_action_just_pressed("ui_down"):
-		_input_dir.emit(TileUtil.Dir.S)
-	if Input.is_action_just_pressed("ui_nw"):
-		_input_dir.emit(TileUtil.Dir.NW)
-	if Input.is_action_just_pressed("ui_ne"):
-		_input_dir.emit(TileUtil.Dir.NE)
-	if Input.is_action_just_pressed("ui_se"):
-		_input_dir.emit(TileUtil.Dir.SE)
-	if Input.is_action_just_pressed("ui_sw"):
-		_input_dir.emit(TileUtil.Dir.SW)
+func _input(event):
+	if _awaiting_input:
+		if Input.is_action_just_pressed("ui_left"):
+			_input_dir.emit(TileUtil.Dir.W)
+		if Input.is_action_just_pressed("ui_right"):
+			_input_dir.emit(TileUtil.Dir.E)
+		if Input.is_action_just_pressed("ui_up"):
+			_input_dir.emit(TileUtil.Dir.N)
+		if Input.is_action_just_pressed("ui_down"):
+			_input_dir.emit(TileUtil.Dir.S)
+		if Input.is_action_just_pressed("ui_nw"):
+			_input_dir.emit(TileUtil.Dir.NW)
+		if Input.is_action_just_pressed("ui_ne"):
+			_input_dir.emit(TileUtil.Dir.NE)
+		if Input.is_action_just_pressed("ui_se"):
+			_input_dir.emit(TileUtil.Dir.SE)
+		if Input.is_action_just_pressed("ui_sw"):
+			_input_dir.emit(TileUtil.Dir.SW)
 
 func _connect_signals():
 	_entity_manager.entity_action_request.connect(_on_entity_action_request)
@@ -39,13 +41,12 @@ func _handle_close_action(entity: Entity):
 	
 	if entity.player_controlled:
 		var grid: Array = _spawn_selector_grid_around(entity)
-		_ask_player_dir_input()
+		_awaiting_input = true
 		var selection_dir = await _input_dir
-		print("Dir await over: " + str(selection_dir))
+		_awaiting_input = false
 		var close_coordinate = Coordinate.new()
 		var surrounding_coords = TileUtil.get_surrounding_tile_vector2_dictionary(entity.coordinate)
 		close_coordinate.vector2 = surrounding_coords[selection_dir]
-		print("close coordinate vector2: " + str(close_coordinate.vector2))
 		var tile_to_close: Tile = _level_manager.get_tile_from_coordinate(close_coordinate)
 		
 		if tile_to_close != null:
@@ -66,6 +67,8 @@ func _handle_close_action(entity: Entity):
 			
 		for selector in grid:
 			selector.queue_free()
+			
+		entity.movement_locked = false
 				
 func _on_entity_action_request(entity: Entity, action: ActionTypes.Action):
 	match action:
@@ -101,8 +104,3 @@ func _spawn_selector_grid_around(entity: Entity) -> Array:
 func _ready() -> void:
 	_test_links()
 	_connect_signals()
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	_ask_player_dir_input()
