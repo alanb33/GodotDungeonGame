@@ -25,7 +25,7 @@ func add_feature(tile: Tile):
 	
 	if _feature_tiles.get(ftype) == null:
 		_feature_tiles[ftype] = []
-	_feature_tiles[ftype].append(tile.coordinate.string)
+	_feature_tiles[ftype].append(tile)
 	
 	var room = get_room_by_tile(tile)
 	if room != null:

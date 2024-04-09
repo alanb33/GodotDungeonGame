@@ -31,7 +31,9 @@ func _prepare_sprite():
 	assert(_sprite != null, "FeatureDoor tried to work with a null Sprite")
 	resize()
 	
-func _ready():
+func _init():
 	_prepare_data()
+	
+func _ready():
 	_prepare_sprite()
 	close()

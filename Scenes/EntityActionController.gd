@@ -68,6 +68,22 @@ func _handle_close_action(entity: Entity):
 			selector.queue_free()
 			
 		entity.movement_locked = false
+		
+func _handle_open_all_action(entity: Entity):
+	var entity_tile = _level_manager.get_tile_from_coordinate(entity.coordinate)
+	var entity_room = _level_manager.get_room_by_tile(entity_tile)
+	if entity_room == null:
+		# Entity is not in a room. Open all doors
+		var all_door_tiles = _level_manager.get_features_of_type(Feature.Type.Door)
+		for tile in all_door_tiles:
+			var door = tile.feature
+			door.open()
+	else:
+		# Entity is in a room. Open the room's doors
+		var room_door_tiles = _level_manager.get_features_of_type_in_room_from_tile(Feature.Type.Door, entity_tile)
+		for tile in room_door_tiles:
+			var door = tile.feature
+			door.open()
 				
 func _on_entity_action_request(entity: Entity, action: ActionTypes.Action):
 	match action:
@@ -75,6 +91,8 @@ func _on_entity_action_request(entity: Entity, action: ActionTypes.Action):
 			print("ActionType Debug from " + entity.entity_name + ": PRINT DEBUG")
 		ActionTypes.Action.ACTION_CLOSE:
 			_handle_close_action(entity)
+		ActionTypes.Action.ACTION_OPEN_ALL:
+			_handle_open_all_action(entity)
 		_:
 			assert(false, "Undefined ActionType received")
 
