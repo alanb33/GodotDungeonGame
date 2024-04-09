@@ -39,7 +39,30 @@ func get_features_of_type_in_room_from_tile(type: Feature.Type, tile: Tile):
 	if room != null:
 		return room.get_features_of_type(type)
 	return null
-
+	
+func handle_adjacent_doors_to(tile: Tile, new_state: FeatureDoor.State):
+	
+	var doors = {}
+	doors[tile.coordinate.string] = true
+	
+	while true:
+		var adjacent_tiles = get_tiles_adjacent_to(tile)
+		for adjacent_tile in adjacent_tiles:
+			if adjacent_tile.feature != null:
+				if adjacent_tile.feature is FeatureDoor:
+					var door = adjacent_tile.feature
+					doors[adjacent_tile.coordinate.string] = door
+	
+	# TODO: Finish this code. This is not usable at this moment.
+	
+func get_tiles_adjacent_to(tile: Tile):
+	var adjacent_tiles = {}
+	var tiles_v2 = TileUtil.get_surrounding_tile_vector2_dictionary(tile.coordinate)
+	for tile_vector in tiles_v2:
+		var coord_string = Coordinate.get_equivalent_string(tile_vector)
+		adjacent_tiles[coord_string] = get_tile_from_coordinate_string(coord_string)
+	return adjacent_tiles
+	
 func add_room(room: Room):
 	if room not in _rooms:
 		_rooms.append(room)
@@ -120,6 +143,10 @@ func get_rooms() -> Array:
 	
 func get_tile_from_coordinate(coordinate: Coordinate) -> Tile:
 	return _all_tiles.get(coordinate.string)
+	
+func get_tile_from_coordinate_string(coord_string: String) -> Tile:
+	TileUtil.check_coordinate_validity(coord_string)
+	return _all_tiles.get(coord_string)
 	
 func highlight_rooms():
 	assert(len(_rooms) > 0, "Tried to highlight rooms, but none are stored")

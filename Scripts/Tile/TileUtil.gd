@@ -12,6 +12,16 @@ enum Dir {
 	NONE,
 }
 
+const _valid_coordinate_regex = "^\\d+-\\d+$"
+
+static func check_coordinate_validity(coordinate_string: String) -> bool:
+	var regex = RegEx.new()
+	regex.compile(_valid_coordinate_regex)
+	if regex.search(coordinate_string):
+		return true
+	assert(false, "Received bad coordinate string: " + coordinate_string)
+	return false
+
 static func get_surrounding_tile_vector2_dictionary(origin: Coordinate) -> Dictionary:
 	
 	var dir_dict = {
