@@ -35,6 +35,8 @@ func _on_action_request(action: ActionTypes.Action):
 		match action:
 			ActionTypes.Action.ACTION_CLOSE:
 				movement_locked = true
+			ActionTypes.Action.ACTION_OPEN:
+				movement_locked = true
 	action_request.emit(self, action)
 
 func _on_move_request(dir: MoveTypes.Dir):

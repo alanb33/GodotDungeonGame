@@ -7,6 +7,8 @@ extends Node
 var _grid_selector_scene: PackedScene = preload("res://Scenes/Util/GridSelector.tscn")
 var _awaiting_input := false
 
+var _active_selector_grid = []
+
 signal _input_dir(dir: TileUtil.Dir)
 
 func _input(event):
@@ -31,6 +33,22 @@ func _input(event):
 func _connect_signals():
 	_entity_manager.entity_action_request.connect(_on_entity_action_request)
 
+func _free_selector_grid() -> void:
+	for grid_square in _active_selector_grid:
+		grid_square.queue_free()
+	_active_selector_grid.clear()
+
+func _get_tile_selection(entity: Entity) -> Tile:
+	_spawn_selector_grid_around(entity)
+	_awaiting_input = true
+	var selection_dir = await _input_dir
+	_awaiting_input = false
+	var selection_coord = Coordinate.new()
+	var surrounding_coords = TileUtil.get_surrounding_tile_vector2_dictionary(entity.coordinate)
+	selection_coord.vector2 = surrounding_coords[selection_dir]
+	
+	return _level_manager.get_tile_from_coordinate(selection_coord)
+
 func _handle_close_action(entity: Entity):
 	# Spawn a grid of sprites around the player to show a highlight of what might be selected.
 	# Then, wait for a directional input.
@@ -40,20 +58,14 @@ func _handle_close_action(entity: Entity):
 	# Only worry about showing this for the Player, I'll do some Entity-specific code later.
 	
 	if entity.player_controlled:
-		var grid: Array = _spawn_selector_grid_around(entity)
-		_awaiting_input = true
-		var selection_dir = await _input_dir
-		_awaiting_input = false
-		var close_coordinate = Coordinate.new()
-		var surrounding_coords = TileUtil.get_surrounding_tile_vector2_dictionary(entity.coordinate)
-		close_coordinate.vector2 = surrounding_coords[selection_dir]
-		var tile_to_close: Tile = _level_manager.get_tile_from_coordinate(close_coordinate)
-		
+		var tile_to_close = await _get_tile_selection(entity)
 		if tile_to_close != null:
-			if tile_to_close.feature != null:
-				if tile_to_close.feature is FeatureDoor:
-					if not tile_to_close.feature.closed:
-						tile_to_close.feature.close()
+			var feature = tile_to_close.feature
+			if feature != null:
+				if feature is FeatureDoor:
+					var door = feature
+					if not door.closed:
+						door.close()
 						print("You close the door.")
 					else:
 						print("That door is already closed.")
@@ -64,10 +76,31 @@ func _handle_close_action(entity: Entity):
 		else:
 			print("Nothing to close there.")
 			
-		for selector in grid:
-			selector.queue_free()
+		_release_player_action(entity)
+		
+func _handle_open_action(entity: Entity):
+	
+	if entity.player_controlled:
+		var tile_to_open = await _get_tile_selection(entity)
+		
+		if tile_to_open != null:
+			var feature = tile_to_open.feature
+			if feature != null:
+				if feature is FeatureDoor:
+					var door: FeatureDoor = tile_to_open.feature
+					if door.closed:
+						print("You open the door.")
+						door.open()
+					else:
+						print("The door is already open.")
+				else:
+					print("You cannot open that.")
+			else:
+				print("Nothing there to open.")
+		else:
+			print("Nothing there to open.")
 			
-		entity.movement_locked = false
+		_release_player_action(entity)
 		
 func _handle_open_all_action(entity: Entity):
 	var entity_tile = _level_manager.get_tile_from_coordinate(entity.coordinate)
@@ -91,6 +124,8 @@ func _on_entity_action_request(entity: Entity, action: ActionTypes.Action):
 			print("ActionType Debug from " + entity.entity_name + ": PRINT DEBUG")
 		ActionTypes.Action.ACTION_CLOSE:
 			_handle_close_action(entity)
+		ActionTypes.Action.ACTION_OPEN:
+			_handle_open_action(entity)
 		ActionTypes.Action.ACTION_OPEN_ALL:
 			_handle_open_all_action(entity)
 		_:
@@ -102,20 +137,21 @@ func _test_links():
 	
 	assert(_grid_selector_scene.can_instantiate(), "EAC cannot instantiate GridSelector scene")
 	
-func _spawn_selector_grid_around(entity: Entity) -> Array:
+func _release_player_action(player: Entity):
+	_free_selector_grid()
+	player.movement_locked = false
+	
+func _spawn_selector_grid_around(entity: Entity) -> void:
 	# Spawn the selector grid around the Entity, and then return it to the caller so they can
 	# despawn it later. We'll also 
 	
-	var grid = []
 	var surrounding_directions: Dictionary = TileUtil.get_surrounding_tile_vector2_dictionary(entity.coordinate)
 	
 	for dir_key in surrounding_directions.keys():
 		var grid_selector = _grid_selector_scene.instantiate()
 		add_child(grid_selector)
 		grid_selector.position = surrounding_directions[dir_key] * TileInfo.CURRENT_DIMENSIONS
-		grid.append(grid_selector)
-		
-	return grid
+		_active_selector_grid.append(grid_selector)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
