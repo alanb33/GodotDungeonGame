@@ -4,12 +4,19 @@ extends Node2D
 @export var transparent = false
 @export var blocking_contact = false
 
+enum Type {
+	Door,
+	None
+}
+
 var _sprite = null
 var sprite: Sprite2D:
 	get:
 		return _sprite
 	set(value):
 		_sprite = value
+
+var type: Feature.Type = Feature.Type.None
 
 func do_entity_contact():
 	assert(false, "Base Feature not implemented error")

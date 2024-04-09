@@ -176,6 +176,7 @@ func _place_doors():
 			for coordinate in passable_edge_coordinates.keys():
 				var tile: Tile = room.get_tile_by_coordinate_string(coordinate)
 				tile.feature = _tile_feature_door.instantiate()
+				_level_manager.add_feature(tile.feature)
 
 
 func _test_links():

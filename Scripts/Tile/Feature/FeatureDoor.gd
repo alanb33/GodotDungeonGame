@@ -22,6 +22,9 @@ func do_entity_contact():
 	if closed:
 		open()
 	
+func _prepare_data():
+	type = Feature.Type.Door
+	
 func _prepare_sprite():
 	# TODO: Turn the base Feature into a scene so we don't need to instantiate in every child.
 	_sprite = $Sprite2D
@@ -29,5 +32,6 @@ func _prepare_sprite():
 	resize()
 	
 func _ready():
+	_prepare_data()
 	_prepare_sprite()
 	close()

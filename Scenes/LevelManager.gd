@@ -7,6 +7,8 @@ var _all_tiles: Dictionary = {}
 var _passable_tiles: Dictionary = {}
 var _impassable_tiles: Dictionary = {}
 
+var _feature_tiles = {}
+
 var _rooms: Array = []
 
 func valid_room(new_room: Room):
@@ -14,6 +16,29 @@ func valid_room(new_room: Room):
 		if new_room.overlaps_with(room):
 			return false
 	return true
+	
+func add_feature(tile: Tile):
+	assert(tile.feature != null, "Tried to add a tile with a null feature to LM")
+	assert(tile.feature.type != Feature.Type.None, "Tried to add a tile with a None-type feature")
+	
+	var ftype = tile.feature.type
+	
+	if _feature_tiles.get(ftype) == null:
+		_feature_tiles[ftype] = []
+	_feature_tiles[ftype].append(tile.coordinate.string)
+	
+	var room = get_room_by_tile(tile)
+	if room != null:
+		room.add_feature(tile)
+		
+func get_features_of_type(type: Feature.Type):
+	return _feature_tiles.get(type)
+	
+func get_features_of_type_in_room_from_tile(type: Feature.Type, tile: Tile):
+	var room = get_room_by_tile(tile)
+	if room != null:
+		return room.get_features_of_type(type)
+	return null
 
 func add_room(room: Room):
 	if room not in _rooms:

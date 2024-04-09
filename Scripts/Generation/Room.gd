@@ -3,6 +3,7 @@ class_name Room
 var _all_tiles: Dictionary = {}
 var _passable_tiles: Dictionary = {}
 var _impassable_tiles: Dictionary = {}
+var _feature_tiles = {}
 
 var pos: Vector2 = Vector2.ZERO
 var size: Vector2 = Vector2.ZERO
@@ -17,6 +18,19 @@ func overlaps_with(other_room: Room):
 				return true
 	
 	return false
+
+func add_feature(tile: Tile):
+	assert(tile.feature != null, "Room tried to add a null feature")
+	assert(tile.feature.type != Feature.Type.None, "Room tried to add a None-type feature")
+	
+	var ftype = tile.feature.type
+	
+	if _feature_tiles.get(ftype) == null:
+		_feature_tiles[ftype] = []
+	_feature_tiles[ftype].append(tile)
+	
+func get_features_of_type(type: Feature.Type):
+	return _feature_tiles.get(type)
 
 func add_tile(tile: Tile):
 	var key = tile.coordinate.string
