@@ -66,7 +66,6 @@ func _handle_close_action(entity: Entity):
 					var door = feature
 					if door.state == FeatureDoor.State.Open:
 						door.close()
-						_level_manager.manage_adjacent_doors("close", )
 						print("You close the door.")
 					else:
 						print("That door is already closed.")
@@ -90,9 +89,8 @@ func _handle_open_action(entity: Entity):
 				if feature is FeatureDoor:
 					var door: FeatureDoor = tile_to_open.feature
 					if door.state == FeatureDoor.State.Closed:
-						print("You open the door.")
 						door.open()
-						_level_manager.handle_adjacent_doors_to(tile_to_open, FeatureDoor.State.Open)
+						print("You open the door.")
 					else:
 						print("The door is already open.")
 				else:

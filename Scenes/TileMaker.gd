@@ -177,6 +177,7 @@ func _place_doors():
 				var tile: Tile = room.get_tile_by_coordinate_string(coordinate)
 				tile.feature = _tile_feature_door.instantiate()
 				_level_manager.add_feature(tile)
+				_level_manager.connect_adjacent_doors(tile)
 
 
 func _test_links():

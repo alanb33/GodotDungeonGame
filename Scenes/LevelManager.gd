@@ -40,26 +40,48 @@ func get_features_of_type_in_room_from_tile(type: Feature.Type, tile: Tile):
 		return room.get_features_of_type(type)
 	return null
 	
-func handle_adjacent_doors_to(tile: Tile, new_state: FeatureDoor.State):
+func connect_adjacent_doors(tile: Tile):
 	
-	var doors = {}
-	doors[tile.coordinate.string] = true
+	assert(tile.feature != null, "Tried to connect adjacent doors for a featureless tile at " + tile.coordinate.string)
+	assert(tile.feature is FeatureDoor, "Tried to connect adjacent doors to a non-door tile at " + tile.coordinate.string)
 	
-	while true:
-		var adjacent_tiles = get_tiles_adjacent_to(tile)
-		for adjacent_tile in adjacent_tiles:
-			if adjacent_tile.feature != null:
-				if adjacent_tile.feature is FeatureDoor:
-					var door = adjacent_tile.feature
-					doors[adjacent_tile.coordinate.string] = door
+	var door_tiles = {}
 	
-	# TODO: Finish this code. This is not usable at this moment.
+	door_tiles[tile.coordinate.string] = tile
+	
+	door_tiles.merge(_search_adjacent_tiles_for_doors_from(tile, door_tiles))
+	
+	for tile_key in door_tiles:
+		var door_tile = door_tiles[tile_key]
+		var door: FeatureDoor = door_tile.feature
+		door.add_neighbor_dictionary(door_tiles)
+	
+func _search_adjacent_tiles_for_doors_from(tile: Tile, door_tiles: Dictionary) -> Dictionary:
+	
+	# The Tile we're searching from should not be included.
+	# We just want to find any doors surrounding it.
+	
+	var adjacent_tiles = get_tiles_adjacent_to(tile)
+	
+	for tile_key in adjacent_tiles:
+		var adjacent_tile = adjacent_tiles[tile_key]
+		if adjacent_tile != null:
+			assert(adjacent_tile is Tile, "adjacent_tile is not Tile but type " + type_string(typeof(adjacent_tile)))
+			if door_tiles.get(adjacent_tile.coordinate.string):
+				continue
+			else:
+				if adjacent_tile.feature != null:
+					if adjacent_tile.feature is FeatureDoor:
+						door_tiles[adjacent_tile.coordinate.string] = adjacent_tile
+						_search_adjacent_tiles_for_doors_from(adjacent_tile, door_tiles)
+					
+	return door_tiles
 	
 func get_tiles_adjacent_to(tile: Tile):
 	var adjacent_tiles = {}
 	var tiles_v2 = TileUtil.get_surrounding_tile_vector2_dictionary(tile.coordinate)
-	for tile_vector in tiles_v2:
-		var coord_string = Coordinate.get_equivalent_string(tile_vector)
+	for tile_vector_key in tiles_v2:
+		var coord_string = Coordinate.get_equivalent_string(tiles_v2[tile_vector_key])
 		adjacent_tiles[coord_string] = get_tile_from_coordinate_string(coord_string)
 	return adjacent_tiles
 	

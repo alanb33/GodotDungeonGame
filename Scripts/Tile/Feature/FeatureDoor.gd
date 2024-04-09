@@ -11,18 +11,45 @@ var _open_texture: Texture = preload("res://Sprites/Door_Open.png")
 
 var state = FeatureDoor.State.Closed
 
+var _door_neighbors = {}
+
+func add_neighbor_dictionary(neighbor_dictionary: Dictionary) -> void:
+	_door_neighbors.merge(neighbor_dictionary)
+
 func close():
+	_do_adjacency_close()
+	
+func open():
+	_do_adjacency_open()
+	
+func _do_close_tasks():
 	$Sprite2D.texture = _closed_texture
 	blocking_contact = true
 	state = FeatureDoor.State.Closed
 	transparent = false
 	
-func open():
+func _do_open_tasks():
 	$Sprite2D.texture = _open_texture
 	blocking_contact = false
 	state = FeatureDoor.State.Open
 	transparent = true
-
+	
+func _do_adjacency_close():
+	for tile_key in _door_neighbors:
+		var neighbor_door: FeatureDoor = _door_neighbors[tile_key].feature
+		neighbor_door.adjacency_close()
+	
+func _do_adjacency_open():
+	for tile_key in _door_neighbors:
+		var neighbor_door: FeatureDoor = _door_neighbors[tile_key].feature
+		neighbor_door.adjacency_open()
+	
+func adjacency_close():
+	_do_close_tasks()
+	
+func adjacency_open():
+	_do_open_tasks()
+	
 func do_entity_contact():
 	if state == FeatureDoor.State.Closed:
 		open()
