@@ -40,6 +40,10 @@ func get_features_of_type_in_room_from_tile(type: Feature.Type, tile: Tile):
 		return room.get_features_of_type(type)
 	return null
 	
+func hide_tiles():
+	for tile_key in _all_tiles:
+		_all_tiles[tile_key].visible = false
+	
 func connect_adjacent_doors(tile: Tile):
 	
 	assert(tile.feature != null, "Tried to connect adjacent doors for a featureless tile at " + tile.coordinate.string)
@@ -177,7 +181,7 @@ func highlight_rooms():
 		var tiles: Dictionary = room.get_all_tiles()
 		for tile_key in tiles:
 			var tile: Tile = tiles[tile_key]
-			tile.sprite.modulate = room_color
+			tile.base_color = room_color
 
 func _test_links():
 	assert(_tile_maker != null)

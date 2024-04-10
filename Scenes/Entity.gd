@@ -13,10 +13,16 @@ var coordinate: Coordinate = Coordinate.new()
 var _sprite: Sprite2D = null
 
 # Player control-related
-var _player_movement_controller = null
-var _player_action_controller = null
+var _player_movement_controller: PlayerMovementController = null
+var _player_action_controller: PlayerActionController = null
+
+# Sight components
+var _sight_circle: SightCircle = null
 
 var movement_locked := false
+
+func update_vision():
+	_sight_circle.update_visible_tiles()
 
 func _connect_components():
 	for component in _components.get_children():
@@ -29,6 +35,8 @@ func _connect_components():
 		if component is PlayerActionController:
 			_player_action_controller = component
 			_player_action_controller.action_request.connect(_on_action_request)
+		if component is SightCircle:
+			_sight_circle = component
 
 func _on_action_request(action: ActionTypes.Action):
 	if player_controlled:

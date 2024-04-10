@@ -15,6 +15,7 @@ func _build_dungeon():
 func _on_dungeon_built():
 	_entity_manager.place_player()
 	_level_manager.highlight_rooms()
+	_level_manager.hide_tiles()
 	
 func _test_links():
 	assert(_tile_maker != null)

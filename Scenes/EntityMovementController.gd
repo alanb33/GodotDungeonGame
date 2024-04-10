@@ -57,6 +57,7 @@ func _on_entity_move_request(entity: Entity, dir: MoveTypes.Dir):
 func _move_entity(entity: Entity, dest_tile: Tile):
 	entity.coordinate.make_equal_to(dest_tile.coordinate)
 	entity.position = dest_tile.position
+	entity.update_vision()
 		
 func _test_links():
 	assert(_entity_manager != null, "EMC has a null EM link")

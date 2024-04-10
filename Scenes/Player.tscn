@@ -1,9 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://bcbshndx3utrx"]
+[gd_scene load_steps=7 format=3 uid="uid://bcbshndx3utrx"]
 
 [ext_resource type="Script" path="res://Scenes/Entity.gd" id="1_3l5so"]
 [ext_resource type="PackedScene" uid="uid://luktwnn1ah82" path="res://Sprites/fox_sprite_2d.tscn" id="2_5t86x"]
 [ext_resource type="PackedScene" uid="uid://dvnawyef432l7" path="res://Components/PlayerMovementController.tscn" id="3_ry8x2"]
 [ext_resource type="PackedScene" uid="uid://d3yhepl5udj3m" path="res://Components/PlayerActionController.tscn" id="4_sq4k8"]
+[ext_resource type="Script" path="res://Scenes/SightCircle.gd" id="5_e7q7x"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1a3rj"]
+radius = 16.0
 
 [node name="Player" type="Node2D"]
 script = ExtResource("1_3l5so")
@@ -18,3 +22,11 @@ z_index = 2
 [node name="PlayerMovementController" parent="Components" instance=ExtResource("3_ry8x2")]
 
 [node name="PlayerActionController" parent="Components" instance=ExtResource("4_sq4k8")]
+
+[node name="SightCircle" type="Area2D" parent="Components"]
+position = Vector2(16, 16)
+script = ExtResource("5_e7q7x")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Components/SightCircle"]
+scale = Vector2(3, 3)
+shape = SubResource("CircleShape2D_1a3rj")

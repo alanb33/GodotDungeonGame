@@ -1,11 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://de76xywx6dkif"]
+[gd_scene load_steps=6 format=3 uid="uid://de76xywx6dkif"]
 
 [ext_resource type="Script" path="res://Scripts/Tile/Tile.gd" id="1_6wycw"]
 [ext_resource type="Script" path="res://Scripts/Tile/Terrain.gd" id="2_shkbd"]
 [ext_resource type="Texture2D" uid="uid://c5slvcg6043su" path="res://Sprites/Wall.png" id="3_c54oh"]
+[ext_resource type="Script" path="res://Scenes/Terrain/DetectionSquare.gd" id="4_ydqqf"]
 
-[node name="TileWall" type="Node2D" node_paths=PackedStringArray("terrain")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r4etd"]
+size = Vector2(32, 32)
+
+[node name="TileWall" type="Node2D" node_paths=PackedStringArray("detection_square", "terrain")]
 script = ExtResource("1_6wycw")
+detection_square = NodePath("DetectionSquare")
 terrain = NodePath("Terrain")
 
 [node name="Terrain" type="Node2D" parent="." node_paths=PackedStringArray("_sprite")]
@@ -17,3 +22,10 @@ _sprite = NodePath("Sprite")
 texture_filter = 1
 texture = ExtResource("3_c54oh")
 offset = Vector2(16, 16)
+
+[node name="DetectionSquare" type="StaticBody2D" parent="."]
+script = ExtResource("4_ydqqf")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionSquare"]
+position = Vector2(16, 16)
+shape = SubResource("RectangleShape2D_r4etd")

@@ -38,6 +38,7 @@ func place_player():
 	_player.position = tile.position
 	_player.coordinate.make_equal_to(tile.coordinate)
 	add_entity(_player)
+	_player.update_vision()
 	_connect_entities()
 	
 func _on_action_request(entity: Entity, action: ActionTypes.Action):
