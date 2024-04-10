@@ -11,10 +11,12 @@ size = Vector2(32, 32)
 [node name="TileFloor" type="Node2D" node_paths=PackedStringArray("detection_square", "terrain")]
 script = ExtResource("1_orf53")
 detection_square = NodePath("DetectionSquare")
+tile_name = "Floor"
 terrain = NodePath("Terrain")
 
 [node name="Terrain" type="Node2D" parent="." node_paths=PackedStringArray("_sprite")]
 script = ExtResource("2_2vxua")
+transparent = true
 _sprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="Terrain"]

@@ -5,9 +5,18 @@ extends Node2D
 ### A Tile has its grid coordinates and its graphic known to it. Its Terrain
 ### determines its passability, transparency, and sprite.
 
+var transparent: bool:
+	get:
+		if feature != null:
+			print("Feature of type " + type_string(typeof(feature)) + " transparent? " + str(feature.transparent))
+			return feature.transparent
+		else:
+			return terrain.transparent
+
 var coordinate: Coordinate = Coordinate.new()
 
 @export var detection_square: DetectionSquare
+@export var tile_name: String
 
 @export var terrain: Terrain
 var _feature: Feature = null

@@ -17,12 +17,12 @@ var _player_movement_controller: PlayerMovementController = null
 var _player_action_controller: PlayerActionController = null
 
 # Sight components
-var _sight_circle: SightCircle = null
+var _sight_caster: SightCaster = null
 
 var movement_locked := false
 
 func update_vision():
-	_sight_circle.update_visible_tiles()
+	_sight_caster.update_visible_tiles()
 
 func _connect_components():
 	for component in _components.get_children():
@@ -35,8 +35,8 @@ func _connect_components():
 		if component is PlayerActionController:
 			_player_action_controller = component
 			_player_action_controller.action_request.connect(_on_action_request)
-		if component is SightCircle:
-			_sight_circle = component
+		if component is SightCaster:
+			_sight_caster = component
 
 func _on_action_request(action: ActionTypes.Action):
 	if player_controlled:
