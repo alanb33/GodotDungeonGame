@@ -51,6 +51,7 @@ func _on_entity_move_request(entity: Entity, dir: MoveTypes.Dir):
 				if not dest_tile.feature.blocking_contact:
 					_move_entity(entity, dest_tile)
 				dest_tile.feature.do_entity_contact()
+				entity.update_vision()
 			else:
 				_move_entity(entity, dest_tile)
 				

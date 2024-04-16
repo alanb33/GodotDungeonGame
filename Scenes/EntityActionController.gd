@@ -9,6 +9,7 @@ var _awaiting_input := false
 
 var _active_selector_grid = []
 
+signal _request_completed(entity: Entity)
 signal _input_dir(dir: TileUtil.Dir)
 
 func _input(event):
@@ -32,6 +33,7 @@ func _input(event):
 
 func _connect_signals():
 	_entity_manager.entity_action_request.connect(_on_entity_action_request)
+	_request_completed.connect(_on_entity_request_completed)
 
 func _free_selector_grid() -> void:
 	for grid_square in _active_selector_grid:
@@ -77,6 +79,8 @@ func _handle_close_action(entity: Entity):
 			print("Nothing to close there.")
 			
 		_release_player_action(entity)
+	
+	_request_completed.emit(entity)
 		
 func _handle_open_action(entity: Entity):
 	
@@ -101,6 +105,8 @@ func _handle_open_action(entity: Entity):
 			print("Nothing there to open.")
 			
 		_release_player_action(entity)
+	
+	_request_completed.emit(entity)
 		
 func _handle_open_all_action(entity: Entity):
 	var entity_tile = _level_manager.get_tile_from_coordinate(entity.coordinate)
@@ -118,6 +124,8 @@ func _handle_open_all_action(entity: Entity):
 			var door = tile.feature
 			door.open()
 				
+	_request_completed.emit(entity)
+				
 func _on_entity_action_request(entity: Entity, action: ActionTypes.Action):
 	match action:
 		ActionTypes.Action.PRINT_DEBUG:
@@ -130,6 +138,11 @@ func _on_entity_action_request(entity: Entity, action: ActionTypes.Action):
 			_handle_open_all_action(entity)
 		_:
 			assert(false, "Undefined ActionType received")
+	
+func _on_entity_request_completed(entity: Entity):
+	if entity.player_controlled:
+		_release_player_action(entity)
+		entity.update_vision()
 
 func _test_links():
 	assert(_entity_manager != null, "EAC has null EM")

@@ -1,12 +1,10 @@
 class_name SightCaster
 extends Node2D
 
-@export var degrees_per_raycast := 15
-
-var _tiles_in_sight = []
+var _tiles_in_sight: Dictionary = {}
 var tiles_in_sight: int:
 	get:
-		return len(_tiles_in_sight)
+		return len(_tiles_in_sight.keys())
 
 var tiles_illuminated := false
 
@@ -17,6 +15,10 @@ func _clear_existing_tiles():
 		tile.color = tile.base_color * 0.5
 		
 	_tiles_in_sight.clear()
+
+func _highlight_tile(tile: Tile):
+	tile.color = highlight_color
+	tile.visible = true
 
 func _highlight_tiles_in_range():
 	for tile in _tiles_in_sight:
@@ -36,51 +38,58 @@ func _wait_for_physics_update():
 func update_visible_tiles():
 	await _wait_for_physics_update()
 	_clear_existing_tiles()
-	_add_tiles_in_range()
+	
+	var search_degree = 15
+	var search_radius = 3
+	
+	_add_tiles_in_range(search_degree, search_radius)
 	_highlight_tiles_in_range()
 	
-func _add_tiles_in_range():
-	var active_ray_dict = {}
-	var ray_length = TileInfo.CURRENT_DIMENSIONS.x
-	var ray: RayCast2D = $RayCast2D
+func _get_tiles_with_raycast_from_degree(degree: int, search_radius: int):
 	
-	var cycles := 2
+	var tile_size := TileInfo.CURRENT_DIMENSIONS.y
 	
-	var spotted_tiles = {}
+	var ray_length = tile_size * search_radius 
+	var ray_min = 0
 	
-	for i in range(0, 360, degrees_per_raycast):
-		active_ray_dict[i] = true
-		
-	print(str(active_ray_dict.keys()))
-		
-	for i in range(1, cycles + 1):		
-		ray.target_position.y = ray_length * i
-		for ray_degree in active_ray_dict:
-			ray.rotation = deg_to_rad(ray_degree)
-			ray.force_raycast_update()
-			var collision = ray.get_collider()
-			if collision is DetectionSquare:
-				var tile: Tile = collision.tile
-				print("Ray collision with " + tile.tile_name)
-				if active_ray_dict[ray_degree] == true:
-					spotted_tiles[tile] = true
-				ray.add_exception(collision)
-				if not tile.transparent:
-					print(tile.tile_name + " is not transparent")
-					active_ray_dict[ray_degree] = false
-						
-				print("Scan of " + str(ray_degree) + " completed")
+	var space_state = get_world_2d().direct_space_state
 	
-	for tile in spotted_tiles:
-		assert(tile is Tile, "tile is not Tile but " + str(type_string(typeof(tile))))
-		_tiles_in_sight.append(tile)
-				
-	ray.clear_exceptions()
+	# The destination formula: x = cos(deg), y = sin(deg)
+	var destination_x = cos(deg_to_rad(degree)) * ray_length
+	var destination_y = sin(deg_to_rad(degree)) * ray_length
 	
-""" Below code only functional with old base type of Area2D
-func _add_tiles_in_range_OLD():
-	for object in get_overlapping_bodies():
-		if object is DetectionSquare:
-			var parent_tile = object.tile
-			_tiles_in_sight.append(parent_tile)
-"""
+	var destination = Vector2(global_position.x + destination_x, global_position.y + destination_y)
+	
+	var tile_hits = {}
+	
+	var query = PhysicsRayQueryParameters2D.create(global_position, destination)
+	query.hit_from_inside = true
+	while ray_min <= ray_length:
+		var result = space_state.intersect_ray(query)
+		if result:
+			var distance_diff = global_position.distance_to(result.position)
+			if distance_diff > ray_min:
+				break
+			else:
+				query.exclude += [result.rid]
+				if result.collider is DetectionSquare:
+					var tile = result.collider.tile
+					tile_hits[tile] = true
+					if not tile.transparent:
+						break
+				ray_min += TileInfo.CURRENT_DIMENSIONS.y
+		else:
+			break
+	
+	return tile_hits
+	
+func _add_tiles_in_range(degrees_per_scan: int, search_radius: int):
+	
+	var steps = 360 / degrees_per_scan
+	assert(steps % 1 == 0, "Degrees per scan gives uneven number of steps (" + str(steps) + ")")
+	
+	for i in range(0, steps):
+		var scan_degree = i * degrees_per_scan
+		var tiles_from_scan = _get_tiles_with_raycast_from_degree(scan_degree, search_radius)
+		_tiles_in_sight.merge(tiles_from_scan, true)
+
