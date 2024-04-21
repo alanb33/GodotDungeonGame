@@ -8,6 +8,7 @@ const DUNGEON_ROOMS = 8
 
 func _connect_signals():
 	_tile_maker.dungeon_built.connect(_on_dungeon_built)
+	_level_manager.request_player_vision_update.connect(_on_request_player_vision_update)
 
 func _build_dungeon():
 	_level_manager.build_dungeon(DUNGEON_ROOMS)
@@ -16,6 +17,9 @@ func _on_dungeon_built():
 	_entity_manager.place_player()
 	_level_manager.highlight_rooms()
 	_level_manager.hide_tiles()
+	
+func _on_request_player_vision_update():
+	_entity_manager.update_player_vision()
 	
 func _test_links():
 	assert(_tile_maker != null)

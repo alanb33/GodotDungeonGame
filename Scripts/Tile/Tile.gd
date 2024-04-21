@@ -82,6 +82,17 @@ func _test_links():
 func _link_detection_square():
 	detection_square.tile = self
 	
+func reveal():
+	visible = true
+	color = base_color * 0.5
+	
+func unhighlight():
+	color = base_color * 0.5
+	
+func highlight():
+	color = TileInfo.HIGHLIGHT_COLOR
+	visible = true
+
 func _ready():
 	_test_links()
 	_link_detection_square()

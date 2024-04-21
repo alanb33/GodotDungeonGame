@@ -41,6 +41,10 @@ func place_player():
 	_player.update_vision()
 	_connect_entities()
 	
+func update_player_vision():
+	assert(_player != null, "Tried to update player vision, but player is null to EM")
+	_player.update_vision()
+	
 func _on_action_request(entity: Entity, action: ActionTypes.Action):
 	entity_action_request.emit(entity, action)
 	

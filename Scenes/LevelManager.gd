@@ -3,6 +3,8 @@ extends Node
 
 @export var _tile_maker: TileMaker = null
 
+signal request_player_vision_update
+
 var _all_tiles: Dictionary = {}
 var _passable_tiles: Dictionary = {}
 var _impassable_tiles: Dictionary = {}
@@ -185,6 +187,20 @@ func highlight_rooms():
 
 func _test_links():
 	assert(_tile_maker != null)
+	
+
+func _reveal_all_tiles():
+	for tile_coord in _all_tiles:
+		var tile = _all_tiles[tile_coord]
+		tile.reveal()
+	request_player_vision_update.emit()
+
+func _do_debug_input(event) -> void:
+	if event.is_action_pressed("debug_reveal_all_tiles"):
+		_reveal_all_tiles()
+
+func _input(event) -> void:
+	_do_debug_input(event)
 	
 func _ready():
 	_test_links()

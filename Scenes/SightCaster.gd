@@ -6,24 +6,18 @@ var tiles_in_sight: int:
 	get:
 		return len(_tiles_in_sight.keys())
 
-var tiles_illuminated := false
-
-const highlight_color := Color.YELLOW
-
 func _clear_existing_tiles():
 	for tile in _tiles_in_sight:
-		tile.color = tile.base_color * 0.5
+		tile.unhighlight()
 		
 	_tiles_in_sight.clear()
 
 func _highlight_tile(tile: Tile):
-	tile.color = highlight_color
-	tile.visible = true
+	tile.highlight()
 
 func _highlight_tiles_in_range():
 	for tile in _tiles_in_sight:
-		tile.color = highlight_color
-		tile.visible = true
+		tile.highlight()
 
 func _wait_for_physics_update():
 	# Why does this need to be done? Because Godot is goofy about its physics frames...
