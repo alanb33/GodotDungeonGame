@@ -17,6 +17,7 @@ func _on_dungeon_built():
 	_entity_manager.place_player()
 	_level_manager.highlight_rooms()
 	_level_manager.hide_tiles()
+	_level_manager.do_debug_tasks()
 	
 func _on_request_player_vision_update():
 	_entity_manager.update_player_vision()

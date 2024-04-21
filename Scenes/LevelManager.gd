@@ -188,19 +188,15 @@ func highlight_rooms():
 func _test_links():
 	assert(_tile_maker != null)
 	
-
+func do_debug_tasks():
+	if GameConfig.DEBUG_REVEAL_ALL_TILES:
+		_reveal_all_tiles()
+	
 func _reveal_all_tiles():
 	for tile_coord in _all_tiles:
 		var tile = _all_tiles[tile_coord]
 		tile.reveal()
 	request_player_vision_update.emit()
-
-func _do_debug_input(event) -> void:
-	if event.is_action_pressed("debug_reveal_all_tiles"):
-		_reveal_all_tiles()
-
-func _input(event) -> void:
-	_do_debug_input(event)
 	
 func _ready():
 	_test_links()
