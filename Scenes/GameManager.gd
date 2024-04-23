@@ -9,15 +9,18 @@ const DUNGEON_ROOMS = 8
 func _connect_signals():
 	_tile_maker.dungeon_built.connect(_on_dungeon_built)
 	_level_manager.request_player_vision_update.connect(_on_request_player_vision_update)
+	_level_manager.request_player_position.connect(_on_request_player_position)
 
 func _build_dungeon():
 	_level_manager.build_dungeon(DUNGEON_ROOMS)
 	
 func _on_dungeon_built():
 	_entity_manager.place_player()
-	_level_manager.highlight_rooms()
-	_level_manager.hide_tiles()
-	_level_manager.do_debug_tasks()
+	_entity_manager.place_enemy()
+	_level_manager.do_dungeon_built_tasks()
+	
+func _on_request_player_position():
+	_level_manager.receive_player_position(_entity_manager._player.coordinate)
 	
 func _on_request_player_vision_update():
 	_entity_manager.update_player_vision()

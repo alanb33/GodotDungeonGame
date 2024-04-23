@@ -5,6 +5,9 @@ extends Node
 
 signal request_player_vision_update
 
+signal request_player_position
+signal complete_player_position_request(player_tile: Tile)
+
 var _all_tiles: Dictionary = {}
 var _passable_tiles: Dictionary = {}
 var _impassable_tiles: Dictionary = {}
@@ -12,6 +15,16 @@ var _impassable_tiles: Dictionary = {}
 var _feature_tiles = {}
 
 var _rooms: Array = []
+
+var _astar: AStar2D = null
+var _astar_counter := 0
+var _astar_id_dict := {}
+
+func do_dungeon_built_tasks():
+	_build_astar_grid()
+	_highlight_rooms()
+	_hide_tiles()
+	_do_debug_tasks()
 
 func valid_room(new_room: Room):
 	for room in _rooms:
@@ -42,7 +55,7 @@ func get_features_of_type_in_room_from_tile(type: Feature.Type, tile: Tile):
 		return room.get_features_of_type(type)
 	return null
 	
-func hide_tiles():
+func _hide_tiles():
 	for tile_key in _all_tiles:
 		_all_tiles[tile_key].visible = false
 	
@@ -83,7 +96,9 @@ func _search_adjacent_tiles_for_doors_from(tile: Tile, door_tiles: Dictionary) -
 					
 	return door_tiles
 	
+## Test documentation outside
 func get_tiles_adjacent_to(tile: Tile):
+	## Test documentation inside
 	var adjacent_tiles = {}
 	var tiles_v2 = TileUtil.get_surrounding_tile_vector2_dictionary(tile.coordinate)
 	for tile_vector_key in tiles_v2:
@@ -176,7 +191,26 @@ func get_tile_from_coordinate_string(coord_string: String) -> Tile:
 	TileUtil.check_coordinate_validity(coord_string)
 	return _all_tiles.get(coord_string)
 	
-func highlight_rooms():
+func get_tile_vector_towards_player(from_tile: Tile):
+	assert(_astar != null, "Tried to get tile towards player, but A* system is null")
+	request_player_position.emit()
+	var player_tile: Tile = await complete_player_position_request
+	var source_id = from_tile.astar_id
+	var player_id = player_tile.astar_id
+
+	var path = _astar.get_point_path(source_id, player_id)
+	print("Path: " + str(path))
+	var next_tile_v2: Vector2 = path[0]
+	var next_tile_coord_string = TileUtil.vector_to_coordinate_string(next_tile_v2.x, next_tile_v2.y)
+	var next_tile = get_tile_from_coordinate_string(next_tile_coord_string)
+	
+	return next_tile.coordinate.vector2
+	
+func receive_player_position(player_coord: Coordinate):
+	var player_tile = get_tile_from_coordinate(player_coord)
+	complete_player_position_request.emit(player_tile)
+	
+func _highlight_rooms():
 	assert(len(_rooms) > 0, "Tried to highlight rooms, but none are stored")
 	for room: Room in _rooms:
 		var room_color = Color(randf(), randf(), randf())
@@ -188,7 +222,7 @@ func highlight_rooms():
 func _test_links():
 	assert(_tile_maker != null)
 	
-func do_debug_tasks():
+func _do_debug_tasks():
 	if GameConfig.DEBUG_REVEAL_ALL_TILES:
 		_reveal_all_tiles()
 	
@@ -197,6 +231,70 @@ func _reveal_all_tiles():
 		var tile = _all_tiles[tile_coord]
 		tile.reveal()
 	request_player_vision_update.emit()
+	
+func _clear_existing_astar():
+	if _astar != null:
+		for key in _all_tiles:
+			var tile: Tile = _all_tiles[key]
+			tile.astar_id = -1
+		_astar.clear()
+		_astar_counter = 0
+		_astar_id_dict.clear()
+	
+func _build_astar_grid():
+	### Construct an A* grid from all connected tiles.
+	_clear_existing_astar()
+	_astar = AStar2D.new()
+	
+	var source_tile: Tile = get_any_passable_tile()
+	
+	_build_astar_grid_from(source_tile)
+	
+	print("Astar buil complete! Final counter: " + str(_astar_counter))
+	
+func _build_astar_grid_from(source_tile: Tile):
+	### This recursive function will propagate to all passable tiles.
+	
+	if source_tile.astar_id != -1:
+		# The 'unconnected' state is -1.
+		_astar.add_point(_astar_counter, source_tile.coordinate.vector2)
+		source_tile.astar_id = _astar_counter
+		_astar_id_dict[_astar_counter] = source_tile
+		_astar_counter += 1
+		
+	# Now get surrounding passable tiles.
+	
+	var new_tiles = []
+	
+	var surrounding_tile_coords_dict = get_tiles_adjacent_to(source_tile)
+	for tile_coord in surrounding_tile_coords_dict:
+		var neighbor_tile: Tile = get_tile_from_coordinate_string(tile_coord)
+		if neighbor_tile != null:
+			if neighbor_tile.terrain.impassable:
+				# Skip impassable tiles
+				continue
+			else:
+				if neighbor_tile.astar_id == -1:
+					# Unconnected tile, let's connect it to us!
+					_astar.add_point(_astar_counter, neighbor_tile.coordinate.vector2)
+					neighbor_tile.astar_id = _astar_counter
+					_astar_id_dict[_astar_counter] = neighbor_tile
+					_astar_counter += 1
+					_astar.connect_points(source_tile.astar_id, neighbor_tile.astar_id)
+					new_tiles.append(neighbor_tile)
+				else:
+					# This is a registered tile, are we connected to it?
+					if _astar.are_points_connected(source_tile.astar_id, neighbor_tile.astar_id):
+						# We are, ignore it!
+						continue
+					else:
+						# We aren't, link up!
+						_astar.connect_points(source_tile.astar_id, neighbor_tile.astar_id)
+			
+	# Now we're linked to the neighbors, so continue from the neighbor tiles!
+	for tile in new_tiles:
+		_build_astar_grid_from(tile)
+	
 	
 func _ready():
 	_test_links()

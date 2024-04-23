@@ -59,6 +59,8 @@ var color: Color:
 			if feature.sprite != null:
 				feature.sprite.modulate = value
 
+var astar_id := -1
+
 func reset_color():
 	color = base_color
 

@@ -13,6 +13,7 @@ enum Dir {
 	RANDOM_NEAR,
 	RANDOM_ROOM,
 	NONE,
+	TOWARDS_PLAYER
 }
 
 static func dir_str(dir: MoveTypes.Dir):

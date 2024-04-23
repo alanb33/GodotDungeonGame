@@ -143,6 +143,7 @@ func _on_entity_request_completed(entity: Entity):
 	if entity.player_controlled:
 		_release_player_action(entity)
 		entity.update_vision()
+	entity.complete_request()
 
 func _test_links():
 	assert(_entity_manager != null, "EAC has null EM")

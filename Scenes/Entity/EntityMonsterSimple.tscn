@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://0jrppkdtvhu4"]
+
+[ext_resource type="PackedScene" uid="uid://dh3g46wl8r50p" path="res://Scenes/Entity.tscn" id="1_kg5j8"]
+
+[node name="EntityMonsterSimple" instance=ExtResource("1_kg5j8")]

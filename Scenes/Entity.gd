@@ -2,6 +2,7 @@ class_name Entity extends Node2D
 
 signal action_request(entity: Entity, action: ActionTypes.Action)
 signal move_request(entity: Entity, dir: MoveTypes.Dir)
+signal turn_complete
 
 @onready var _components = $Components
 @export var entity_name: String = "Entity"
@@ -22,7 +23,8 @@ var _sight_caster: SightCaster = null
 var movement_locked := false
 
 func update_vision():
-	_sight_caster.update_visible_tiles()
+	if _sight_caster != null:
+		_sight_caster.update_visible_tiles()
 
 func _connect_components():
 	for component in _components.get_children():
@@ -50,6 +52,18 @@ func _on_action_request(action: ActionTypes.Action):
 func _on_move_request(dir: MoveTypes.Dir):
 	if not movement_locked:
 		move_request.emit(self, dir)
+		
+func complete_request():
+	turn_complete.emit()
+		
+var action_counter = 0
+		
+func do_action():
+	print("calling do_action" + str(action_counter))
+	action_counter += 1
+	if not player_controlled:
+		move_request.emit(self, MoveTypes.Dir.TOWARDS_PLAYER)
+	await turn_complete
 
 func _prepare_sprite():
 	_sprite.scale.x = TileInfo.CURRENT_DIMENSIONS.x / TileInfo.BASE_DIMENSIONS.x

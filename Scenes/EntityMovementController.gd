@@ -37,6 +37,9 @@ func _on_entity_move_request(entity: Entity, dir: MoveTypes.Dir):
 			new_dest_coord.vector2.y += 1
 		MoveTypes.Dir.RANDOM:
 			new_dest_coord.make_equal_to(_level_manager.get_any_passable_tile().coordinate)
+		MoveTypes.Dir.TOWARDS_PLAYER:
+			new_dest_coord.vector2 = await _level_manager.get_tile_vector_towards_player(entity_tile)
+			print("Enemy dest request: " + str(new_dest_coord.vector2))
 		_:
 			print("Move type not implemented")
 			
@@ -54,6 +57,8 @@ func _on_entity_move_request(entity: Entity, dir: MoveTypes.Dir):
 				entity.update_vision()
 			else:
 				_move_entity(entity, dest_tile)
+				
+	entity.complete_request()
 				
 func _move_entity(entity: Entity, dest_tile: Tile):
 	entity.coordinate.make_equal_to(dest_tile.coordinate)
