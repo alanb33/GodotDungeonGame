@@ -75,3 +75,4 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	# TODO: Write a proper system for an entity to report that its turn is finished. This will take some refactoring, since I only have prototype code for moving the player.
+	pass
